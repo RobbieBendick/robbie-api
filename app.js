@@ -3,9 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 const port = 5000;
 
@@ -20,9 +20,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+require('dotenv').config()
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.1kwptpo.mongodb.net/?retryWrites=true&w=majority/blog`)
+
+
+const postSchema = {
+  title: String,
+  content: String
+};
+
+
+const Post = mongoose.model("Post", postSchema);
+
+app.use('/blog', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -41,7 +52,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port, () => {
-  console.log(`Listening on port ${5000}`);
+  console.log(`Listening on port ${port}`);
 })
 
 module.exports = app;
