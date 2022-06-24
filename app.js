@@ -7,14 +7,13 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 var router = express.Router();
 var bodyParser = require('body-parser');
-
-var indexRouter = require('./routes/index');
-var composeRouter = require('./routes/compose');
+var cors = require('cors');
 
 
 const port = 5000;
 
 var app = express();
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,6 +43,12 @@ app.get('/', (req, res, next) => {
     });
   });
 });
+
+app.get('/api', (req, res, next) => {
+  Post.find({}, (err, posts) => {
+    res.json(posts);
+  });
+})
 
 // compose route
 app.get('/compose', (req, res, next) => {
